@@ -1,0 +1,124 @@
+{% extends 'base.html' %}
+{% block title %}Our Services — ElevaTech{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+  <div class="container">
+    <div class="page-hero-content">
+      <span class="section-tag">What We Offer</span>
+      <h1>Full-Spectrum Elevator<br>Services & Solutions</h1>
+      <p>From first installation to long-term maintenance, we handle every aspect of your elevator's lifecycle.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="services-detail-grid">
+
+      <div class="service-detail-card">
+        <div class="sd-icon" style="background:linear-gradient(135deg,#667eea,#764ba2)">🏗️</div>
+        <div class="sd-content">
+          <h3>Elevator Installation</h3>
+          <p>Full turnkey elevator installation from structural survey to commissioning. We handle passenger lifts, goods elevators, hospital stretcher lifts, and service elevators for any building type.</p>
+          <ul class="sd-list">
+            <li>Site survey and structural assessment</li>
+            <li>Custom elevator design and specification</li>
+            <li>Complete mechanical installation</li>
+            <li>Load testing and commissioning</li>
+            <li>Regulatory compliance certification</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="service-detail-card">
+        <div class="sd-icon" style="background:linear-gradient(135deg,#f093fb,#f5576c)">⚡</div>
+        <div class="sd-content">
+          <h3>Electrical Wiring</h3>
+          <p>Certified electrical engineering for all elevator wiring systems — from motor circuits to control panel wiring. We ensure every cable run is safe, labeled, and code-compliant.</p>
+          <ul class="sd-list">
+            <li>Power supply and motor wiring</li>
+            <li>Control panel installation</li>
+            <li>Emergency lighting circuits</li>
+            <li>Cable tray and conduit routing</li>
+            <li>Electrical safety testing</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="service-detail-card">
+        <div class="sd-icon" style="background:linear-gradient(135deg,#4facfe,#00f2fe)">🖥️</div>
+        <div class="sd-content">
+          <h3>PCB & Motherboard Setup</h3>
+          <p>Expert diagnosis and setup of elevator controller PCBs and motherboards. We work with all major brands and can source replacement boards for legacy systems.</p>
+          <ul class="sd-list">
+            <li>Controller board installation & configuration</li>
+            <li>PCB fault diagnosis and repair</li>
+            <li>EPROM and firmware updates</li>
+            <li>Legacy board sourcing and replacement</li>
+            <li>Drive parameter optimization</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="service-detail-card">
+        <div class="sd-icon" style="background:linear-gradient(135deg,#43e97b,#38f9d7)">📡</div>
+        <div class="sd-content">
+          <h3>Sensor Configuration</h3>
+          <p>Precision installation and calibration of all elevator sensors — from landing zone sensors to overload detectors. Accurate sensor setup is critical to safe elevator operation.</p>
+          <ul class="sd-list">
+            <li>Door safety sensor setup</li>
+            <li>Floor-level landing sensors</li>
+            <li>Overload and weight sensors</li>
+            <li>Speed and position encoders</li>
+            <li>Annual sensor recalibration</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="service-detail-card">
+        <div class="sd-icon" style="background:linear-gradient(135deg,#fa709a,#fee140)">🔧</div>
+        <div class="sd-content">
+          <h3>Preventive Maintenance</h3>
+          <p>Structured monthly, quarterly, and annual maintenance programs to prevent failures before they happen. Includes lubrication, adjustment, cleaning, and full system inspection.</p>
+          <ul class="sd-list">
+            <li>Monthly lubrication and adjustment</li>
+            <li>Quarterly full safety inspection</li>
+            <li>Annual load and safety tests</li>
+            <li>Rope and pulley inspection</li>
+            <li>Digital service records on our platform</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="service-detail-card">
+        <div class="sd-icon" style="background:linear-gradient(135deg,#a18cd1,#fbc2eb)">🚨</div>
+        <div class="sd-content">
+          <h3>Emergency Fault Repair</h3>
+          <p>24/7 emergency response for elevator breakdowns. Our technicians are equipped with diagnostic tools and common spare parts to restore service quickly.</p>
+          <ul class="sd-list">
+            <li>24/7 emergency dispatch</li>
+            <li>Passenger entrapment response</li>
+            <li>Motor and drive fault repair</li>
+            <li>Door mechanism repair</li>
+            <li>Temporary bypass solutions</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section class="cta-section">
+  <div class="container">
+    <div class="cta-card">
+      <div class="cta-content">
+        <h2>Need a Service Quote?</h2>
+        <p>Contact our team for a free assessment and custom service proposal.</p>
+        <a href="{% url 'contact' %}" class="btn btn-white btn-lg">Get in Touch</a>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

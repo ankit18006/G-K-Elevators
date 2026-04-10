@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+{% block title %}Report Fault — ElevaTech{% endblock %}
+
+{% block content %}
+<div class="app-layout">
+  {% include 'sidebar.html' %}
+  <div class="app-main">
+
+    <div class="app-header">
+      <div>
+        <h1 class="page-title">Report a Fault</h1>
+        <p class="page-sub">Log a new fault or issue for an elevator</p>
+      </div>
+      <a href="{% url 'faults' %}" class="btn btn-ghost btn-sm">← Back</a>
+    </div>
+
+    <div class="form-card">
+      <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <div class="form-section-title">Fault Details</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Elevator *</label>
+            <select name="elevator" required>
+              <option value="">Select elevator...</option>
+              {% for el in elevators %}
+              <option value="{{ el.pk }}">{{ el.building_name }} — {{ el.location }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Fault Type *</label>
+            <select name="fault_type" required>
+              <option value="">Select fault type...</option>
+              <option value="sensor">Sensor Issue</option>
+              <option value="door">Door Issue</option>
+              <option value="motor">Motor Issue</option>
+              <option value="pcb">PCB / Motherboard Failure</option>
+              <option value="wiring">Wiring Issue</option>
+              <option value="cabin">Cabin Issue</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Severity *</label>
+            <select name="severity" required>
+              <option value="low">Low — Minor inconvenience</option>
+              <option value="medium" selected>Medium — Needs attention</option>
+              <option value="high">High — Significant impact</option>
+              <option value="critical">Critical — Elevator out of service</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Initial Status</label>
+            <select name="status">
+              <option value="pending">Pending</option>
+              <option value="in_progress">In Progress</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Description *</label>
+          <textarea name="description" rows="4" placeholder="Describe the fault in detail — what happened, when it started, symptoms observed..." required></textarea>
+        </div>
+
+        <div class="form-section-title">Assignment</div>
+        <div class="form-group">
+          <label>Assign Technician</label>
+          <select name="assigned_technician">
+            <option value="">— Unassigned —</option>
+            {% for tech in technicians %}
+            <option value="{{ tech.pk }}">{{ tech.name }} ({{ tech.skills }})</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="form-section-title">Photo Evidence (Optional)</div>
+        <div class="form-group">
+          <label>Upload Fault Image (Before)</label>
+          <input type="file" name="image_before" accept="image/*">
+          <div class="form-hint">Upload a photo of the fault. Max 5MB. JPG/PNG accepted.</div>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-danger">Submit Fault Report</button>
+          <a href="{% url 'faults' %}" class="btn btn-ghost">Cancel</a>
+        </div>
+      </form>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% block title %}Register — ElevaTech{% endblock %}
+{% block body_class %}auth-page{% endblock %}
+{% block show_footer %}{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+  <div class="auth-left">
+    <div class="auth-brand">
+      <a href="{% url 'home' %}" class="nav-brand auth-logo">
+        <span class="brand-icon">⬆</span>
+        <span>Eleva<strong>Tech</strong></span>
+      </a>
+    </div>
+    <div class="auth-tagline">
+      <h2>Start Managing Elevators Smarter</h2>
+      <p>Create your free account and bring your entire elevator maintenance operation online in minutes.</p>
+      <div class="auth-features">
+        <div class="af-item">✅ Free to get started</div>
+        <div class="af-item">✅ No credit card required</div>
+        <div class="af-item">✅ Unlimited elevator tracking</div>
+        <div class="af-item">✅ AI-powered fault suggestions</div>
+      </div>
+    </div>
+  </div>
+  <div class="auth-right">
+    <div class="auth-form-card">
+      <h2>Create Account</h2>
+      <p class="auth-sub">Join ElevaTech and manage smarter</p>
+
+      <form method="POST" class="auth-form">
+        {% csrf_token %}
+        <div class="form-row">
+          <div class="form-group">
+            <label>First Name</label>
+            <input type="text" name="first_name" placeholder="John">
+          </div>
+          <div class="form-group">
+            <label>Last Name</label>
+            <input type="text" name="last_name" placeholder="Smith">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Username *</label>
+          <input type="text" name="username" placeholder="Choose a username" required>
+        </div>
+        <div class="form-group">
+          <label>Email Address</label>
+          <input type="email" name="email" placeholder="you@company.com">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Password *</label>
+            <input type="password" name="password1" placeholder="Min. 8 characters" required>
+          </div>
+          <div class="form-group">
+            <label>Confirm Password *</label>
+            <input type="password" name="password2" placeholder="Repeat password" required>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block btn-lg">Create Account →</button>
+      </form>
+
+      <p class="auth-switch">Already have an account? <a href="{% url 'login' %}">Sign in</a></p>
+    </div>
+  </div>
+</div>
+{% endblock %}

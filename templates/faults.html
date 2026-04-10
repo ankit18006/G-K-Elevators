@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+{% block title %}Fault Reports — ElevaTech{% endblock %}
+
+{% block content %}
+<div class="app-layout">
+  {% include 'sidebar.html' %}
+  <div class="app-main">
+
+    <div class="app-header">
+      <div>
+        <h1 class="page-title">Fault Reports</h1>
+        <p class="page-sub">{{ faults.count }} total report{{ faults.count|pluralize }}</p>
+      </div>
+      <a href="{% url 'add_fault' %}" class="btn btn-danger">⚠️ Report New Fault</a>
+    </div>
+
+    <!-- Filters -->
+    <form method="GET" class="filter-bar">
+      <div class="filter-group">
+        <label>Status</label>
+        <select name="status">
+          <option value="">All Status</option>
+          <option value="pending" {% if status_filter == 'pending' %}selected{% endif %}>Pending</option>
+          <option value="in_progress" {% if status_filter == 'in_progress' %}selected{% endif %}>In Progress</option>
+          <option value="completed" {% if status_filter == 'completed' %}selected{% endif %}>Completed</option>
+          <option value="escalated" {% if status_filter == 'escalated' %}selected{% endif %}>Escalated</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label>Fault Type</label>
+        <select name="fault_type">
+          <option value="">All Types</option>
+          <option value="sensor" {% if fault_filter == 'sensor' %}selected{% endif %}>Sensor</option>
+          <option value="door" {% if fault_filter == 'door' %}selected{% endif %}>Door</option>
+          <option value="motor" {% if fault_filter == 'motor' %}selected{% endif %}>Motor</option>
+          <option value="pcb" {% if fault_filter == 'pcb' %}selected{% endif %}>PCB</option>
+          <option value="wiring" {% if fault_filter == 'wiring' %}selected{% endif %}>Wiring</option>
+          <option value="cabin" {% if fault_filter == 'cabin' %}selected{% endif %}>Cabin</option>
+          <option value="other" {% if fault_filter == 'other' %}selected{% endif %}>Other</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label>Severity</label>
+        <select name="severity">
+          <option value="">All Severities</option>
+          <option value="low" {% if severity_filter == 'low' %}selected{% endif %}>Low</option>
+          <option value="medium" {% if severity_filter == 'medium' %}selected{% endif %}>Medium</option>
+          <option value="high" {% if severity_filter == 'high' %}selected{% endif %}>High</option>
+          <option value="critical" {% if severity_filter == 'critical' %}selected{% endif %}>Critical</option>
+        </select>
+      </div>
+      <button type="submit" class="btn btn-primary btn-sm">Filter</button>
+      <a href="{% url 'faults' %}" class="btn btn-ghost btn-sm">Clear</a>
+    </form>
+
+    <!-- Table -->
+    <div class="full-table-card">
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Elevator</th>
+              <th>Fault Type</th>
+              <th>Description</th>
+              <th>Severity</th>
+              <th>Status</th>
+              <th>Technician</th>
+              <th>Reported</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for f in faults %}
+            <tr>
+              <td style="color:var(--mid);font-size:.82rem;">#{{ f.pk }}</td>
+              <td>
+                <a href="{% url 'elevator_detail' f.elevator.pk %}" style="color:var(--primary);font-weight:600;">{{ f.elevator.building_name|truncatechars:20 }}</a>
+                <div style="font-size:.78rem;color:var(--mid);">{{ f.elevator.location|truncatechars:18 }}</div>
+              </td>
+              <td>{{ f.get_fault_type_display }}</td>
+              <td>
+                {{ f.description|truncatechars:50 }}
+                {% if f.ai_suggestion %}
+                <div title="{{ f.ai_suggestion }}" style="color:var(--warning);font-size:.78rem;font-weight:600;cursor:help;">🤖 AI Suggestion ⓘ</div>
+                {% endif %}
+              </td>
+              <td><span class="badge badge-{{ f.severity }}">{{ f.severity|upper }}</span></td>
+              <td><span class="badge badge-status-{{ f.status }}">{{ f.get_status_display }}</span></td>
+              <td>{{ f.assigned_technician.name|default:"—" }}</td>
+              <td>{{ f.reported_at|date:"d M Y" }}</td>
+              <td>
+                <div style="display:flex;gap:6px;">
+                  <a href="{% url 'update_fault' f.pk %}" class="btn btn-secondary btn-sm">Update</a>
+                  <form method="POST" action="{% url 'delete_fault' f.pk %}" onsubmit="return confirm('Delete this fault report?')">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-ghost btn-sm">Del</button>
+                  </form>
+                </div>
+              </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="9" class="empty-row" style="padding:40px;">No fault reports found.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

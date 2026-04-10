@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}ElevaTech — Smart Elevator Services{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  {% block extra_head %}{% endblock %}
+</head>
+<body class="{% block body_class %}{% endblock %}">
+
+<!-- NAVBAR -->
+<nav class="navbar" id="navbar">
+  <div class="nav-container">
+    <a href="{% url 'home' %}" class="nav-brand">
+      <span class="brand-icon">⬆</span>
+      <span>Eleva<strong>Tech</strong></span>
+    </a>
+
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">
+      <span></span><span></span><span></span>
+    </button>
+
+    <ul class="nav-links" id="navLinks">
+      <li><a href="{% url 'home' %}" class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}">Home</a></li>
+      <li><a href="{% url 'about' %}" class="nav-link {% if request.resolver_match.url_name == 'about' %}active{% endif %}">About</a></li>
+      <li><a href="{% url 'services' %}" class="nav-link {% if request.resolver_match.url_name == 'services' %}active{% endif %}">Services</a></li>
+      <li><a href="{% url 'contact' %}" class="nav-link {% if request.resolver_match.url_name == 'contact' %}active{% endif %}">Contact</a></li>
+      {% if user.is_authenticated %}
+      <li class="nav-dropdown">
+        <a href="{% url 'dashboard' %}" class="nav-link nav-dashboard">
+          <span class="user-avatar">{{ user.username|first|upper }}</span>
+          {{ user.first_name|default:user.username }}
+        </a>
+        <ul class="dropdown-menu">
+          <li><a href="{% url 'dashboard' %}">📊 Dashboard</a></li>
+          <li><a href="{% url 'elevators' %}">🏗️ Elevators</a></li>
+          <li><a href="{% url 'technicians' %}">👷 Technicians</a></li>
+          <li><a href="{% url 'faults' %}">⚠️ Fault Reports</a></li>
+          <li><a href="{% url 'maintenance' %}">🔧 Maintenance</a></li>
+          <li><a href="{% url 'service_history' %}">📋 History</a></li>
+          <li class="divider"></li>
+          <li><a href="{% url 'logout' %}" class="logout-link">🚪 Logout</a></li>
+        </ul>
+      </li>
+      {% else %}
+      <li><a href="{% url 'login' %}" class="nav-link nav-btn">Login</a></li>
+      {% endif %}
+    </ul>
+  </div>
+</nav>
+
+<!-- MESSAGES -->
+{% if messages %}
+<div class="messages-container">
+  {% for message in messages %}
+  <div class="alert alert-{{ message.tags }} alert-dismissible">
+    <span>{{ message }}</span>
+    <button class="alert-close" onclick="this.parentElement.remove()">×</button>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+
+<!-- MAIN CONTENT -->
+<main>
+  {% block content %}{% endblock %}
+</main>
+
+<!-- FOOTER -->
+{% block show_footer %}
+<footer class="footer">
+  <div class="footer-container">
+    <div class="footer-brand">
+      <div class="footer-logo">⬆ Eleva<strong>Tech</strong></div>
+      <p>Smart elevator maintenance & service tracking for modern buildings.</p>
+    </div>
+    <div class="footer-links">
+      <h4>Company</h4>
+      <ul>
+        <li><a href="{% url 'about' %}">About Us</a></li>
+        <li><a href="{% url 'services' %}">Our Services</a></li>
+        <li><a href="{% url 'contact' %}">Contact</a></li>
+      </ul>
+    </div>
+    <div class="footer-links">
+      <h4>Services</h4>
+      <ul>
+        <li><a href="{% url 'services' %}">Installation</a></li>
+        <li><a href="{% url 'services' %}">Wiring & Electrical</a></li>
+        <li><a href="{% url 'services' %}">PCB & Sensors</a></li>
+        <li><a href="{% url 'services' %}">Maintenance</a></li>
+      </ul>
+    </div>
+    <div class="footer-contact">
+      <h4>Contact Us</h4>
+      <p>📍 Industrial Zone, Block A</p>
+      <p>📞 +1 (800) ELEVATE</p>
+      <p>✉️ support@elevatech.com</p>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2024 ElevaTech. All rights reserved.</p>
+  </div>
+</footer>
+{% endblock %}
+
+<script>
+  // Navbar scroll effect
+  window.addEventListener('scroll', () => {
+    document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 50);
+  });
+  // Mobile toggle
+  document.getElementById('navToggle').addEventListener('click', () => {
+    document.getElementById('navLinks').classList.toggle('open');
+  });
+  // Auto-dismiss messages
+  setTimeout(() => {
+    document.querySelectorAll('.alert').forEach(a => a.style.opacity = '0');
+  }, 5000);
+</script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>

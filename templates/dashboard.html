@@ -1,0 +1,163 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Dashboard — ElevaTech{% endblock %}
+{% block extra_head %}<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>{% endblock %}
+
+{% block content %}
+<div class="app-layout">
+  {% include 'sidebar.html' %}
+  <div class="app-main">
+
+    <div class="app-header">
+      <div>
+        <h1 class="page-title">Dashboard</h1>
+        <p class="page-sub">Welcome back, {{ user.first_name|default:user.username }} 👋</p>
+      </div>
+      <div class="header-actions">
+        <a href="{% url 'add_fault' %}" class="btn btn-danger btn-sm">⚠️ Report Fault</a>
+        <a href="{% url 'add_maintenance' %}" class="btn btn-primary btn-sm">+ Schedule Maintenance</a>
+      </div>
+    </div>
+
+    {% if overdue_maintenance > 0 %}
+    <div class="alert alert-warning" style="margin-bottom:20px;">
+      ⚠️ <strong>{{ overdue_maintenance }} maintenance schedule(s) are overdue!</strong>
+      <a href="{% url 'maintenance' %}" style="color:inherit;text-decoration:underline;margin-left:8px;">View & resolve →</a>
+    </div>
+    {% endif %}
+
+    <!-- Stats Grid -->
+    <div class="stats-grid">
+      <div class="stat-card stat-blue">
+        <div class="stat-icon">🏗️</div>
+        <div class="stat-info"><div class="stat-value">{{ total_elevators }}</div><div class="stat-label">Total Elevators</div></div>
+      </div>
+      <div class="stat-card stat-green">
+        <div class="stat-icon">✅</div>
+        <div class="stat-info"><div class="stat-value">{{ working }}</div><div class="stat-label">Working</div></div>
+      </div>
+      <div class="stat-card stat-red">
+        <div class="stat-icon">⚠️</div>
+        <div class="stat-info"><div class="stat-value">{{ active_faults }}</div><div class="stat-label">Active Faults</div></div>
+      </div>
+      <div class="stat-card stat-orange">
+        <div class="stat-icon">🔧</div>
+        <div class="stat-info"><div class="stat-value">{{ upcoming_maintenance }}</div><div class="stat-label">Upcoming (7 days)</div></div>
+      </div>
+      <div class="stat-card stat-purple">
+        <div class="stat-icon">👷</div>
+        <div class="stat-info"><div class="stat-value">{{ total_technicians }}</div><div class="stat-label">Technicians</div></div>
+      </div>
+      <div class="stat-card stat-teal">
+        <div class="stat-icon">📋</div>
+        <div class="stat-info"><div class="stat-value">{{ completed_services }}</div><div class="stat-label">Services Done</div></div>
+      </div>
+    </div>
+
+    <!-- Charts -->
+    <div class="charts-grid">
+      <div class="chart-card">
+        <h3>Elevator Status Overview</h3>
+        <canvas id="statusChart" height="220"></canvas>
+      </div>
+      <div class="chart-card">
+        <h3>Fault Reports by Type</h3>
+        <canvas id="faultChart" height="220"></canvas>
+      </div>
+    </div>
+
+    <!-- Tables -->
+    <div class="tables-grid">
+      <div class="table-card">
+        <div class="table-header">
+          <h3>Recent Fault Reports</h3>
+          <a href="{% url 'faults' %}" class="table-link">View All →</a>
+        </div>
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr><th>Elevator</th><th>Fault</th><th>Severity</th><th>Status</th></tr>
+            </thead>
+            <tbody>
+              {% for f in recent_faults %}
+              <tr>
+                <td>{{ f.elevator.building_name|truncatechars:22 }}</td>
+                <td>{{ f.get_fault_type_display }}</td>
+                <td><span class="badge badge-{{ f.severity }}">{{ f.severity|upper }}</span></td>
+                <td><span class="badge badge-status-{{ f.status }}">{{ f.get_status_display }}</span></td>
+              </tr>
+              {% empty %}
+              <tr><td colspan="4" class="empty-row">No fault reports yet.</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="table-card">
+        <div class="table-header">
+          <h3>Upcoming Maintenance</h3>
+          <a href="{% url 'maintenance' %}" class="table-link">View All →</a>
+        </div>
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr><th>Elevator</th><th>Type</th><th>Date</th><th>Technician</th></tr>
+            </thead>
+            <tbody>
+              {% for m in upcoming_maint %}
+              <tr>
+                <td>{{ m.elevator.building_name|truncatechars:22 }}</td>
+                <td>{{ m.get_maintenance_type_display }}</td>
+                <td>{{ m.scheduled_date }}</td>
+                <td>{{ m.technician.name|default:"—" }}</td>
+              </tr>
+              {% empty %}
+              <tr><td colspan="4" class="empty-row">No upcoming maintenance.</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const statusData = {{ status_data|safe }};
+new Chart(document.getElementById('statusChart'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Working', 'Faulty', 'Maintenance', 'Offline'],
+    datasets: [{
+      data: [statusData.working, statusData.faulty, statusData.maintenance, statusData.offline],
+      backgroundColor: ['#10b981','#ef4444','#f59e0b','#6b7280'],
+      borderWidth: 2, borderColor: '#fff'
+    }]
+  },
+  options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { padding: 16, font: { size: 12 } } } }, cutout: '65%' }
+});
+
+const faultData = {{ fault_type_data|safe }};
+const faultLabels = { sensor:'Sensor', door:'Door', motor:'Motor', pcb:'PCB', wiring:'Wiring', cabin:'Cabin', other:'Other' };
+new Chart(document.getElementById('faultChart'), {
+  type: 'bar',
+  data: {
+    labels: faultData.map(f => faultLabels[f.fault_type] || f.fault_type),
+    datasets: [{
+      label: 'Reports',
+      data: faultData.map(f => f.count),
+      backgroundColor: '#6366f1',
+      borderRadius: 6, borderSkipped: false
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: { legend: { display: false } },
+    scales: { y: { beginAtZero: true, grid: { color: '#f1f5f9' }, ticks: { stepSize: 1 } }, x: { grid: { display: false } } }
+  }
+});
+</script>
+{% endblock %}

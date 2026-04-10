@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% block title %}Schedule Maintenance — ElevaTech{% endblock %}
+
+{% block content %}
+<div class="app-layout">
+  {% include 'sidebar.html' %}
+  <div class="app-main">
+
+    <div class="app-header">
+      <div>
+        <h1 class="page-title">Schedule Maintenance</h1>
+        <p class="page-sub">Plan a maintenance visit for an elevator</p>
+      </div>
+      <a href="{% url 'maintenance' %}" class="btn btn-ghost btn-sm">← Back</a>
+    </div>
+
+    <div class="form-card">
+      <form method="POST">
+        {% csrf_token %}
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Elevator *</label>
+            <select name="elevator" required>
+              <option value="">Select elevator...</option>
+              {% for el in elevators %}
+              <option value="{{ el.pk }}">{{ el.building_name }} — {{ el.location }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Maintenance Type *</label>
+            <select name="maintenance_type" required>
+              <option value="monthly">Monthly Service</option>
+              <option value="quarterly">Quarterly Inspection</option>
+              <option value="annual">Annual Overhaul</option>
+              <option value="emergency">Emergency Check</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Scheduled Date *</label>
+            <input type="date" name="scheduled_date" required>
+          </div>
+          <div class="form-group">
+            <label>Assign Technician</label>
+            <select name="technician">
+              <option value="">— Unassigned —</option>
+              {% for tech in technicians %}
+              <option value="{{ tech.pk }}">{{ tech.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Notes</label>
+          <textarea name="notes" rows="3" placeholder="Any special instructions or items to check..."></textarea>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">Schedule Maintenance</button>
+          <a href="{% url 'maintenance' %}" class="btn btn-ghost">Cancel</a>
+        </div>
+      </form>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

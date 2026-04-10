@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+{% block title %}Elevators — ElevaTech{% endblock %}
+
+{% block content %}
+<div class="app-layout">
+  {% include 'sidebar.html' %}
+  <div class="app-main">
+
+    <div class="app-header">
+      <div>
+        <h1 class="page-title">Elevators</h1>
+        <p class="page-sub">{{ elevators.count }} elevator{{ elevators.count|pluralize }} registered</p>
+      </div>
+      <div class="header-actions">
+        <a href="{% url 'add_elevator' %}" class="btn btn-primary">+ Add Elevator</a>
+      </div>
+    </div>
+
+    <!-- Filters -->
+    <form method="GET" class="filter-bar">
+      <div class="filter-group">
+        <label>Location</label>
+        <input type="text" name="location" value="{{ location_filter }}" placeholder="Search location...">
+      </div>
+      <div class="filter-group">
+        <label>Status</label>
+        <select name="status">
+          <option value="">All Status</option>
+          <option value="working" {% if status_filter == 'working' %}selected{% endif %}>Working</option>
+          <option value="faulty" {% if status_filter == 'faulty' %}selected{% endif %}>Faulty</option>
+          <option value="maintenance" {% if status_filter == 'maintenance' %}selected{% endif %}>Under Maintenance</option>
+          <option value="offline" {% if status_filter == 'offline' %}selected{% endif %}>Offline</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label>Type</label>
+        <select name="type">
+          <option value="">All Types</option>
+          <option value="passenger" {% if type_filter == 'passenger' %}selected{% endif %}>Passenger</option>
+          <option value="goods" {% if type_filter == 'goods' %}selected{% endif %}>Goods</option>
+          <option value="service" {% if type_filter == 'service' %}selected{% endif %}>Service</option>
+          <option value="hospital" {% if type_filter == 'hospital' %}selected{% endif %}>Hospital</option>
+        </select>
+      </div>
+      <button type="submit" class="btn btn-primary btn-sm">Filter</button>
+      <a href="{% url 'elevators' %}" class="btn btn-ghost btn-sm">Clear</a>
+    </form>
+
+    <!-- Elevator Cards -->
+    {% if elevators %}
+    <div class="card-grid">
+      {% for el in elevators %}
+      <div class="item-card">
+        <div class="item-card-header">
+          <div>
+            <div class="item-card-title">{{ el.building_name }}</div>
+            <div class="item-card-sub">📍 {{ el.location }}</div>
+          </div>
+          <span class="badge badge-{{ el.status }}">{{ el.get_status_display }}</span>
+        </div>
+        <div class="item-card-body">
+          <div class="item-meta">
+            <div class="meta-row"><span class="meta-icon">🏢</span> {{ el.get_elevator_type_display }} Elevator</div>
+            <div class="meta-row"><span class="meta-icon">📐</span> {{ el.floors_served }} Floor{{ el.floors_served|pluralize }} Served</div>
+            <div class="meta-row"><span class="meta-icon">📅</span> Installed {{ el.installation_date }}</div>
+            {% if el.assigned_technician %}
+            <div class="meta-row"><span class="meta-icon">👷</span> {{ el.assigned_technician.name }}</div>
+            {% endif %}
+            {% if el.model_number %}
+            <div class="meta-row"><span class="meta-icon">🔖</span> Model: {{ el.model_number }}</div>
+            {% endif %}
+          </div>
+          {% with active=el.get_active_faults %}
+          {% if active.count > 0 %}
+          <div style="margin-top:10px;padding:8px 12px;background:#fef2f2;border-radius:8px;font-size:.83rem;color:#991b1b;font-weight:600;">
+            ⚠️ {{ active.count }} active fault{{ active.count|pluralize }}
+          </div>
+          {% endif %}
+          {% endwith %}
+        </div>
+        <div class="item-card-footer">
+          <a href="{% url 'elevator_detail' el.pk %}" class="btn btn-ghost btn-sm">View Detail</a>
+          <a href="{% url 'edit_elevator' el.pk %}" class="btn btn-secondary btn-sm">Edit</a>
+          <form method="POST" action="{% url 'delete_elevator' el.pk %}" style="display:inline;" onsubmit="return confirm('Delete this elevator?')">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+          </form>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div style="text-align:center;padding:80px 20px;background:white;border-radius:12px;border:1px solid var(--border);">
+      <div style="font-size:3rem;margin-bottom:16px;">🏗️</div>
+      <h3 style="margin-bottom:8px;">No Elevators Found</h3>
+      <p style="color:var(--mid);margin-bottom:24px;">
+        {% if location_filter or status_filter or type_filter %}No elevators match your filters.{% else %}Get started by adding your first elevator.{% endif %}
+      </p>
+      <a href="{% url 'add_elevator' %}" class="btn btn-primary">+ Add Elevator</a>
+    </div>
+    {% endif %}
+
+  </div>
+</div>
+{% endblock %}

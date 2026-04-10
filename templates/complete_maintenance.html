@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block title %}Complete Maintenance — ElevaTech{% endblock %}
+
+{% block content %}
+<div class="app-layout">
+  {% include 'sidebar.html' %}
+  <div class="app-main">
+
+    <div class="app-header">
+      <div>
+        <h1 class="page-title">Mark Maintenance Complete</h1>
+        <p class="page-sub">{{ maint.elevator.building_name }} — {{ maint.get_maintenance_type_display }}</p>
+      </div>
+      <a href="{% url 'maintenance' %}" class="btn btn-ghost btn-sm">← Back</a>
+    </div>
+
+    <div class="detail-card" style="max-width:600px;margin-bottom:20px;">
+      <h3>Maintenance Details</h3>
+      <div class="detail-row"><span class="detail-label">Elevator</span><span class="detail-value">{{ maint.elevator.building_name }}</span></div>
+      <div class="detail-row"><span class="detail-label">Location</span><span class="detail-value">{{ maint.elevator.location }}</span></div>
+      <div class="detail-row"><span class="detail-label">Type</span><span class="detail-value">{{ maint.get_maintenance_type_display }}</span></div>
+      <div class="detail-row"><span class="detail-label">Scheduled Date</span><span class="detail-value">{{ maint.scheduled_date }}</span></div>
+      <div class="detail-row"><span class="detail-label">Technician</span><span class="detail-value">{{ maint.technician.name|default:"Unassigned" }}</span></div>
+    </div>
+
+    <div class="form-card" style="max-width:600px;">
+      <h3>Completion Notes</h3>
+      <form method="POST">
+        {% csrf_token %}
+        <div class="form-group">
+          <label>Work Completed</label>
+          <textarea name="completion_notes" rows="4" placeholder="Describe the maintenance work carried out, any parts replaced, observations..."></textarea>
+        </div>
+        <div style="background:#ecfdf5;border:1px solid #6ee7b7;border-radius:8px;padding:12px 16px;font-size:.85rem;color:#065f46;margin-bottom:16px;">
+          ✅ This will mark the maintenance as completed and create a service history record automatically.
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn btn-success">✅ Confirm Complete</button>
+          <a href="{% url 'maintenance' %}" class="btn btn-ghost">Cancel</a>
+        </div>
+      </form>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

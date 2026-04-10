@@ -1,0 +1,16 @@
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <span class="brand-icon">⬆</span> Eleva<strong>Tech</strong>
+  </div>
+  <nav class="sidebar-nav">
+    <a href="{% url 'dashboard' %}" class="sb-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">📊 Dashboard</a>
+    <a href="{% url 'elevators' %}" class="sb-link {% if 'elevator' in request.resolver_match.url_name %}active{% endif %}">🏗️ Elevators</a>
+    <a href="{% url 'technicians' %}" class="sb-link {% if 'technician' in request.resolver_match.url_name %}active{% endif %}">👷 Technicians</a>
+    <a href="{% url 'faults' %}" class="sb-link {% if 'fault' in request.resolver_match.url_name %}active{% endif %}">⚠️ Fault Reports</a>
+    <a href="{% url 'maintenance' %}" class="sb-link {% if 'maintenance' in request.resolver_match.url_name %}active{% endif %}">🔧 Maintenance</a>
+    <a href="{% url 'service_history' %}" class="sb-link {% if request.resolver_match.url_name == 'service_history' %}active{% endif %}">📋 Service History</a>
+    <div class="sb-divider"></div>
+    <a href="{% url 'home' %}" class="sb-link">🌐 Public Site</a>
+    <a href="{% url 'logout' %}" class="sb-link sb-logout">🚪 Logout</a>
+  </nav>
+</aside>

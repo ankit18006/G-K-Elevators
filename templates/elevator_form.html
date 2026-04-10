@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+{% block title %}{{ action }} Elevator — ElevaTech{% endblock %}
+
+{% block content %}
+<div class="app-layout">
+  {% include 'sidebar.html' %}
+  <div class="app-main">
+
+    <div class="app-header">
+      <div>
+        <h1 class="page-title">{{ action }} Elevator</h1>
+        <p class="page-sub">{% if elevator %}Update elevator details{% else %}Register a new elevator in the system{% endif %}</p>
+      </div>
+      <a href="{% url 'elevators' %}" class="btn btn-ghost btn-sm">← Back to Elevators</a>
+    </div>
+
+    <div class="form-card">
+      <form method="POST">
+        {% csrf_token %}
+
+        <div class="form-section-title">Building & Location</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Building Name *</label>
+            <input type="text" name="building_name" value="{{ elevator.building_name|default:'' }}" placeholder="e.g. Tower A, City Mall" required>
+          </div>
+          <div class="form-group">
+            <label>Location / Address *</label>
+            <input type="text" name="location" value="{{ elevator.location|default:'' }}" placeholder="e.g. Downtown, Mumbai" required>
+          </div>
+        </div>
+
+        <div class="form-section-title">Elevator Details</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Elevator Type *</label>
+            <select name="elevator_type" required>
+              <option value="passenger" {% if elevator.elevator_type == 'passenger' %}selected{% endif %}>Passenger</option>
+              <option value="goods" {% if elevator.elevator_type == 'goods' %}selected{% endif %}>Goods / Freight</option>
+              <option value="service" {% if elevator.elevator_type == 'service' %}selected{% endif %}>Service</option>
+              <option value="hospital" {% if elevator.elevator_type == 'hospital' %}selected{% endif %}>Hospital / Stretcher</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Model Number</label>
+            <input type="text" name="model_number" value="{{ elevator.model_number|default:'' }}" placeholder="e.g. OTIS-2000X">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Floors Served</label>
+            <input type="number" name="floors_served" value="{{ elevator.floors_served|default:1 }}" min="1" max="200">
+          </div>
+          <div class="form-group">
+            <label>Installation Date *</label>
+            <input type="date" name="installation_date" value="{{ elevator.installation_date|date:'Y-m-d'|default:'' }}" required>
+          </div>
+        </div>
+
+        <div class="form-section-title">Status & Assignment</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Current Status *</label>
+            <select name="status" required>
+              <option value="working" {% if elevator.status == 'working' %}selected{% endif %}>Working</option>
+              <option value="faulty" {% if elevator.status == 'faulty' %}selected{% endif %}>Faulty</option>
+              <option value="maintenance" {% if elevator.status == 'maintenance' %}selected{% endif %}>Under Maintenance</option>
+              <option value="offline" {% if elevator.status == 'offline' %}selected{% endif %}>Offline</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Assigned Technician</label>
+            <select name="assigned_technician">
+              <option value="">— None —</option>
+              {% for tech in technicians %}
+              <option value="{{ tech.pk }}" {% if elevator.assigned_technician_id == tech.pk %}selected{% endif %}>{{ tech.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Notes</label>
+          <textarea name="notes" rows="3" placeholder="Any additional notes about this elevator...">{{ elevator.notes|default:'' }}</textarea>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">{{ action }} Elevator</button>
+          <a href="{% url 'elevators' %}" class="btn btn-ghost">Cancel</a>
+        </div>
+      </form>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

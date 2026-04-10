@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% block title %}Technicians — ElevaTech{% endblock %}
+
+{% block content %}
+<div class="app-layout">
+  {% include 'sidebar.html' %}
+  <div class="app-main">
+
+    <div class="app-header">
+      <div>
+        <h1 class="page-title">Technicians</h1>
+        <p class="page-sub">{{ technicians.count }} technician{{ technicians.count|pluralize }} in the system</p>
+      </div>
+      <a href="{% url 'add_technician' %}" class="btn btn-primary">+ Add Technician</a>
+    </div>
+
+    {% if technicians %}
+    <div class="card-grid">
+      {% for tech in technicians %}
+      <div class="item-card">
+        <div class="item-card-header">
+          <div style="display:flex;align-items:center;gap:12px;">
+            <div style="width:44px;height:44px;background:linear-gradient(135deg,var(--primary),var(--purple));border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-size:1.1rem;font-weight:800;flex-shrink:0;">
+              {{ tech.name|first|upper }}
+            </div>
+            <div>
+              <div class="item-card-title">{{ tech.name }}</div>
+              <div class="item-card-sub">Joined {{ tech.joined_date }}</div>
+            </div>
+          </div>
+          <span class="badge {% if tech.is_available %}badge-working{% else %}badge-offline{% endif %}">
+            {% if tech.is_available %}Available{% else %}Busy{% endif %}
+          </span>
+        </div>
+        <div class="item-card-body">
+          <div class="item-meta">
+            {% if tech.email %}<div class="meta-row"><span class="meta-icon">✉️</span> {{ tech.email }}</div>{% endif %}
+            {% if tech.phone %}<div class="meta-row"><span class="meta-icon">📞</span> {{ tech.phone }}</div>{% endif %}
+            <div class="meta-row"><span class="meta-icon">⚠️</span> {{ tech.active_jobs }} active job{{ tech.active_jobs|pluralize }}</div>
+          </div>
+          <div class="skills-wrap" style="margin-top:12px;">
+            {% for skill in tech.skills_list %}
+            <span class="skill-tag">{{ skill }}</span>
+            {% endfor %}
+          </div>
+        </div>
+        <div class="item-card-footer">
+          <a href="{% url 'edit_technician' tech.pk %}" class="btn btn-secondary btn-sm">Edit</a>
+          <form method="POST" action="{% url 'delete_technician' tech.pk %}" style="display:inline;" onsubmit="return confirm('Delete {{ tech.name }}?')">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+          </form>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div style="text-align:center;padding:80px 20px;background:white;border-radius:12px;border:1px solid var(--border);">
+      <div style="font-size:3rem;margin-bottom:16px;">👷</div>
+      <h3 style="margin-bottom:8px;">No Technicians Yet</h3>
+      <p style="color:var(--mid);margin-bottom:24px;">Add your first technician to start assigning jobs.</p>
+      <a href="{% url 'add_technician' %}" class="btn btn-primary">+ Add Technician</a>
+    </div>
+    {% endif %}
+
+  </div>
+</div>
+{% endblock %}

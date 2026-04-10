@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+{% block title %}Update Fault #{{ fault.pk }} — ElevaTech{% endblock %}
+
+{% block content %}
+<div class="app-layout">
+  {% include 'sidebar.html' %}
+  <div class="app-main">
+
+    <div class="app-header">
+      <div>
+        <h1 class="page-title">Update Fault Report #{{ fault.pk }}</h1>
+        <p class="page-sub">{{ fault.elevator.building_name }} — {{ fault.get_fault_type_display }}</p>
+      </div>
+      <a href="{% url 'faults' %}" class="btn btn-ghost btn-sm">← Back</a>
+    </div>
+
+    <!-- Current Info -->
+    <div class="detail-card" style="margin-bottom:20px;">
+      <h3>Current Fault Details</h3>
+      <div class="detail-row"><span class="detail-label">Elevator</span><span class="detail-value">{{ fault.elevator.building_name }}</span></div>
+      <div class="detail-row"><span class="detail-label">Fault Type</span><span class="detail-value">{{ fault.get_fault_type_display }}</span></div>
+      <div class="detail-row"><span class="detail-label">Severity</span><span class="detail-value"><span class="badge badge-{{ fault.severity }}">{{ fault.severity|upper }}</span></span></div>
+      <div class="detail-row"><span class="detail-label">Current Status</span><span class="detail-value"><span class="badge badge-status-{{ fault.status }}">{{ fault.get_status_display }}</span></span></div>
+      <div class="detail-row"><span class="detail-label">Reported At</span><span class="detail-value">{{ fault.reported_at|date:"d M Y H:i" }}</span></div>
+      <div style="margin-top:12px;padding:12px;background:var(--lighter);border-radius:8px;font-size:.88rem;">{{ fault.description }}</div>
+      {% if fault.ai_suggestion %}
+      <div class="ai-suggestion-box" style="margin-top:12px;">{{ fault.ai_suggestion }}</div>
+      {% endif %}
+    </div>
+
+    {% if fault.image_before %}
+    <div class="detail-card" style="margin-bottom:20px;">
+      <h3>Fault Photo (Before)</h3>
+      <img src="{{ fault.image_before.url }}" style="max-width:400px;border-radius:8px;border:1px solid var(--border);">
+    </div>
+    {% endif %}
+
+    <!-- Update Form -->
+    <div class="form-card">
+      <h3>Update Fault Status</h3>
+      <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="form-row">
+          <div class="form-group">
+            <label>New Status *</label>
+            <select name="status" required>
+              <option value="pending" {% if fault.status == 'pending' %}selected{% endif %}>Pending</option>
+              <option value="in_progress" {% if fault.status == 'in_progress' %}selected{% endif %}>In Progress</option>
+              <option value="completed" {% if fault.status == 'completed' %}selected{% endif %}>Completed</option>
+              <option value="escalated" {% if fault.status == 'escalated' %}selected{% endif %}>Escalated</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Assigned Technician</label>
+            <select name="assigned_technician">
+              <option value="">— Unassigned —</option>
+              {% for tech in technicians %}
+              <option value="{{ tech.pk }}" {% if fault.assigned_technician_id == tech.pk %}selected{% endif %}>{{ tech.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Resolution Notes</label>
+          <textarea name="resolution_notes" rows="4" placeholder="Describe what was done to resolve the issue, parts replaced, etc.">{{ fault.resolution_notes }}</textarea>
+        </div>
+        <div class="form-group">
+          <label>Upload After-Repair Photo</label>
+          <input type="file" name="image_after" accept="image/*">
+          {% if fault.image_after %}
+          <div style="margin-top:8px;"><img src="{{ fault.image_after.url }}" style="max-width:200px;border-radius:8px;border:1px solid var(--border);"></div>
+          {% endif %}
+        </div>
+        <div style="background:#ecfdf5;border:1px solid #6ee7b7;border-radius:8px;padding:12px 16px;font-size:.85rem;color:#065f46;margin-bottom:16px;">
+          💡 Setting status to <strong>Completed</strong> will automatically create a service history record and mark the elevator as Working.
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">Save Update</button>
+          <a href="{% url 'faults' %}" class="btn btn-ghost">Cancel</a>
+        </div>
+      </form>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

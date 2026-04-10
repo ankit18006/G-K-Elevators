@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+{% block title %}{{ elevator.building_name }} — ElevaTech{% endblock %}
+
+{% block content %}
+<div class="app-layout">
+  {% include 'sidebar.html' %}
+  <div class="app-main">
+
+    <div class="app-header">
+      <div>
+        <h1 class="page-title">{{ elevator.building_name }}</h1>
+        <p class="page-sub">📍 {{ elevator.location }} &nbsp;|&nbsp; <span class="badge badge-{{ elevator.status }}">{{ elevator.get_status_display }}</span></p>
+      </div>
+      <div class="header-actions">
+        <a href="{% url 'edit_elevator' elevator.pk %}" class="btn btn-secondary btn-sm">Edit</a>
+        <a href="{% url 'add_fault' %}?elevator={{ elevator.pk }}" class="btn btn-danger btn-sm">⚠️ Report Fault</a>
+        <a href="{% url 'elevators' %}" class="btn btn-ghost btn-sm">← Back</a>
+      </div>
+    </div>
+
+    <div class="detail-grid">
+      <!-- Left: Details -->
+      <div>
+        <div class="detail-card" style="margin-bottom:20px;">
+          <h3>Elevator Information</h3>
+          <div class="detail-row"><span class="detail-label">Type</span><span class="detail-value"><span class="badge badge-{{ elevator.elevator_type }}">{{ elevator.get_elevator_type_display }}</span></span></div>
+          <div class="detail-row"><span class="detail-label">Model</span><span class="detail-value">{{ elevator.model_number|default:"—" }}</span></div>
+          <div class="detail-row"><span class="detail-label">Floors Served</span><span class="detail-value">{{ elevator.floors_served }}</span></div>
+          <div class="detail-row"><span class="detail-label">Installation Date</span><span class="detail-value">{{ elevator.installation_date }}</span></div>
+          <div class="detail-row"><span class="detail-label">Status</span><span class="detail-value"><span class="badge badge-{{ elevator.status }}">{{ elevator.get_status_display }}</span></span></div>
+          <div class="detail-row"><span class="detail-label">Assigned Technician</span><span class="detail-value">{{ elevator.assigned_technician.name|default:"—" }}</span></div>
+          <div class="detail-row"><span class="detail-label">Total Fault Reports</span><span class="detail-value">{{ elevator.get_fault_count }}</span></div>
+          <div class="detail-row"><span class="detail-label">Added</span><span class="detail-value">{{ elevator.created_at|date:"d M Y" }}</span></div>
+          {% if elevator.notes %}
+          <div style="margin-top:14px;padding:12px;background:var(--lighter);border-radius:8px;font-size:.88rem;color:var(--dark-3);">{{ elevator.notes }}</div>
+          {% endif %}
+        </div>
+
+        <!-- Upcoming Maintenance -->
+        <div class="detail-card">
+          <h3>Upcoming Maintenance <a href="{% url 'add_maintenance' %}" style="font-size:.82rem;color:var(--primary);font-weight:600;margin-left:8px;">+ Schedule</a></h3>
+          {% for m in maintenance %}
+          <div class="detail-row">
+            <span class="detail-label">{{ m.get_maintenance_type_display }}</span>
+            <span class="detail-value">{{ m.scheduled_date }} &nbsp;<span class="badge badge-status-{{ m.status }}">{{ m.get_status_display }}</span></span>
+          </div>
+          {% empty %}
+          <p style="color:var(--mid);font-size:.88rem;">No maintenance scheduled.</p>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- Right: Faults & History -->
+      <div>
+        <div class="table-card" style="margin-bottom:20px;">
+          <div class="table-header">
+            <h3>Fault Reports ({{ faults.count }})</h3>
+            <a href="{% url 'add_fault' %}" class="table-link">+ Report Fault</a>
+          </div>
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead><tr><th>Fault</th><th>Severity</th><th>Status</th><th>Reported</th><th></th></tr></thead>
+              <tbody>
+                {% for f in faults %}
+                <tr>
+                  <td>{{ f.get_fault_type_display }}<br><small style="color:var(--mid);">{{ f.description|truncatechars:40 }}</small></td>
+                  <td><span class="badge badge-{{ f.severity }}">{{ f.severity|upper }}</span></td>
+                  <td><span class="badge badge-status-{{ f.status }}">{{ f.get_status_display }}</span></td>
+                  <td>{{ f.reported_at|date:"d M" }}</td>
+                  <td><a href="{% url 'update_fault' f.pk %}" class="table-link">Update</a></td>
+                </tr>
+                {% if f.ai_suggestion %}
+                <tr><td colspan="5" class="ai-suggestion-box">{{ f.ai_suggestion }}</td></tr>
+                {% endif %}
+                {% empty %}
+                <tr><td colspan="5" class="empty-row">No fault reports.</td></tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="table-card">
+          <div class="table-header">
+            <h3>Service History</h3>
+            <a href="{% url 'service_history' %}" class="table-link">View All</a>
+          </div>
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead><tr><th>Date</th><th>Work Done</th><th>Technician</th></tr></thead>
+              <tbody>
+                {% for h in history %}
+                <tr>
+                  <td>{{ h.service_date }}</td>
+                  <td>{{ h.work_done|truncatechars:50 }}</td>
+                  <td>{{ h.technician.name|default:"—" }}</td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="3" class="empty-row">No service history.</td></tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

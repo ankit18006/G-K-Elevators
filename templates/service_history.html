@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% block title %}Service History — ElevaTech{% endblock %}
+
+{% block content %}
+<div class="app-layout">
+  {% include 'sidebar.html' %}
+  <div class="app-main">
+
+    <div class="app-header">
+      <div>
+        <h1 class="page-title">Service History</h1>
+        <p class="page-sub">Complete record of all repairs and maintenance</p>
+      </div>
+    </div>
+
+    <div class="full-table-card">
+      <div class="full-table-header">
+        <h3>All Service Records ({{ history.count }})</h3>
+      </div>
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Elevator</th>
+              <th>Location</th>
+              <th>Work Done</th>
+              <th>Parts Replaced</th>
+              <th>Technician</th>
+              <th>Type</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for h in history %}
+            <tr>
+              <td style="white-space:nowrap;">{{ h.service_date }}</td>
+              <td>
+                <a href="{% url 'elevator_detail' h.elevator.pk %}" style="color:var(--primary);font-weight:600;">{{ h.elevator.building_name }}</a>
+              </td>
+              <td style="font-size:.82rem;color:var(--mid);">{{ h.elevator.location }}</td>
+              <td>{{ h.work_done|truncatechars:60 }}</td>
+              <td>{{ h.parts_replaced|default:"—"|truncatechars:30 }}</td>
+              <td>{{ h.technician.name|default:"—" }}</td>
+              <td>
+                {% if h.fault_report %}
+                <span class="badge badge-status-completed">Fault Repair</span>
+                {% elif h.maintenance %}
+                <span class="badge badge-status-scheduled">Maintenance</span>
+                {% else %}
+                <span class="badge badge-offline">Manual</span>
+                {% endif %}
+              </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="7" class="empty-row" style="padding:40px;">No service history yet. Service records are created automatically when faults are resolved or maintenance is completed.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

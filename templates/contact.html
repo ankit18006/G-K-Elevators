@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% block title %}Contact Us — ElevaTech{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+  <div class="container">
+    <div class="page-hero-content">
+      <span class="section-tag">Get In Touch</span>
+      <h1>We're Here to Help</h1>
+      <p>Have a question or need a service quote? Send us a message and our team will respond within 24 hours.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="contact-grid">
+      <div class="contact-info">
+        <h3>Contact Information</h3>
+        <div class="contact-item">
+          <div class="ci-icon">📍</div>
+          <div>
+            <strong>Head Office</strong>
+            <p>Industrial Zone, Block A, Unit 12<br>Tech Park, Mumbai 400072</p>
+          </div>
+        </div>
+        <div class="contact-item">
+          <div class="ci-icon">📞</div>
+          <div>
+            <strong>Phone</strong>
+            <p>+1 (800) ELEVATE<br>+91 98765 43210</p>
+          </div>
+        </div>
+        <div class="contact-item">
+          <div class="ci-icon">✉️</div>
+          <div>
+            <strong>Email</strong>
+            <p>support@elevatech.com<br>sales@elevatech.com</p>
+          </div>
+        </div>
+        <div class="contact-item">
+          <div class="ci-icon">⏰</div>
+          <div>
+            <strong>Business Hours</strong>
+            <p>Mon–Sat: 8:00 AM – 6:00 PM<br>Emergency: 24/7</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="contact-form-card">
+        <h3>Send Us a Message</h3>
+        <form method="POST" class="contact-form">
+          {% csrf_token %}
+          <div class="form-row">
+            <div class="form-group">
+              <label>Full Name *</label>
+              <input type="text" name="name" placeholder="John Smith" required>
+            </div>
+            <div class="form-group">
+              <label>Email Address *</label>
+              <input type="email" name="email" placeholder="john@company.com" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Subject *</label>
+            <input type="text" name="subject" placeholder="Service inquiry / Maintenance quote" required>
+          </div>
+          <div class="form-group">
+            <label>Message *</label>
+            <textarea name="message" rows="5" placeholder="Tell us about your elevator needs..." required></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary btn-block">Send Message →</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

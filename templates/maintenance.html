@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+{% block title %}Maintenance Scheduler — ElevaTech{% endblock %}
+
+{% block content %}
+<div class="app-layout">
+  {% include 'sidebar.html' %}
+  <div class="app-main">
+
+    <div class="app-header">
+      <div>
+        <h1 class="page-title">Maintenance Scheduler</h1>
+        <p class="page-sub">Schedule and track elevator maintenance</p>
+      </div>
+      <a href="{% url 'add_maintenance' %}" class="btn btn-primary">+ Schedule Maintenance</a>
+    </div>
+
+    <!-- Overdue -->
+    {% if overdue %}
+    <div class="maint-section">
+      <h3>🔴 Overdue Maintenance ({{ overdue.count }})</h3>
+      {% for m in overdue %}
+      <div class="maint-card overdue">
+        <div class="maint-info">
+          <div class="maint-title">{{ m.elevator.building_name }} — {{ m.get_maintenance_type_display }}</div>
+          <div class="maint-meta">
+            📍 {{ m.elevator.location }} &nbsp;|&nbsp;
+            📅 Was due {{ m.scheduled_date }} &nbsp;|&nbsp;
+            👷 {{ m.technician.name|default:"Unassigned" }}
+          </div>
+          {% if m.notes %}<div style="font-size:.82rem;color:var(--mid);margin-top:4px;">{{ m.notes|truncatechars:100 }}</div>{% endif %}
+        </div>
+        <div class="maint-actions">
+          <a href="{% url 'complete_maintenance' m.pk %}" class="btn btn-success btn-sm">Mark Complete</a>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Upcoming -->
+    <div class="maint-section">
+      <h3>🔵 Upcoming Maintenance ({{ upcoming.count }})</h3>
+      {% for m in upcoming %}
+      <div class="maint-card upcoming">
+        <div class="maint-info">
+          <div class="maint-title">{{ m.elevator.building_name }} — {{ m.get_maintenance_type_display }}</div>
+          <div class="maint-meta">
+            📍 {{ m.elevator.location }} &nbsp;|&nbsp;
+            📅 Scheduled {{ m.scheduled_date }} &nbsp;|&nbsp;
+            👷 {{ m.technician.name|default:"Unassigned" }}
+            &nbsp;|&nbsp; <span class="badge badge-status-{{ m.status }}">{{ m.get_status_display }}</span>
+          </div>
+        </div>
+        <div class="maint-actions">
+          <a href="{% url 'complete_maintenance' m.pk %}" class="btn btn-success btn-sm">Mark Complete</a>
+        </div>
+      </div>
+      {% empty %}
+      <div style="padding:32px;text-align:center;background:white;border-radius:12px;border:1px solid var(--border);color:var(--mid);">
+        No upcoming maintenance scheduled. <a href="{% url 'add_maintenance' %}" style="color:var(--primary);font-weight:600;">Schedule now →</a>
+      </div>
+      {% endfor %}
+    </div>
+
+    <!-- Completed -->
+    {% if completed %}
+    <div class="maint-section">
+      <h3>✅ Recently Completed</h3>
+      <div class="full-table-card">
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr><th>Elevator</th><th>Type</th><th>Scheduled</th><th>Completed</th><th>Technician</th></tr>
+            </thead>
+            <tbody>
+              {% for m in completed %}
+              <tr>
+                <td>{{ m.elevator.building_name }}</td>
+                <td>{{ m.get_maintenance_type_display }}</td>
+                <td>{{ m.scheduled_date }}</td>
+                <td>{{ m.completed_at|date:"d M Y H:i"|default:"—" }}</td>
+                <td>{{ m.technician.name|default:"—" }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+
+  </div>
+</div>
+{% endblock %}

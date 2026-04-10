@@ -1,0 +1,158 @@
+{% extends 'base.html' %}
+
+{% block title %}ElevaTech — Smart Elevator Maintenance & Service{% endblock %}
+
+{% block content %}
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-content">
+    <div class="hero-badge">🏆 Trusted Elevator Experts Since 2005</div>
+    <h1 class="hero-title">Smart Elevator<br><span class="gradient-text">Maintenance & Service</span></h1>
+    <p class="hero-subtitle">Complete digital management for elevator installation, wiring, PCB setup, sensor configuration, and preventive maintenance — all in one intelligent platform.</p>
+    <div class="hero-actions">
+      <a href="{% url 'register' %}" class="btn btn-primary btn-lg">Get Started Free</a>
+      <a href="{% url 'services' %}" class="btn btn-outline btn-lg">Explore Services</a>
+    </div>
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <span class="stat-num">{{ stats.elevators }}+</span>
+        <span class="stat-lbl">Elevators Tracked</span>
+      </div>
+      <div class="hero-stat">
+        <span class="stat-num">{{ stats.technicians }}+</span>
+        <span class="stat-lbl">Expert Technicians</span>
+      </div>
+      <div class="hero-stat">
+        <span class="stat-num">{{ stats.completed_services }}+</span>
+        <span class="stat-lbl">Services Completed</span>
+      </div>
+      <div class="hero-stat">
+        <span class="stat-num">{{ stats.cities_served }}+</span>
+        <span class="stat-lbl">Locations Served</span>
+      </div>
+    </div>
+  </div>
+  <div class="hero-visual">
+    <div class="elevator-card-3d">
+      <div class="el-shaft">
+        <div class="el-cabin">
+          <div class="el-door left"></div>
+          <div class="el-door right"></div>
+        </div>
+      </div>
+      <div class="status-badge status-working">● Live Monitoring</div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="section features-section">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-tag">What We Do</span>
+      <h2>Complete Elevator Management<br>From Installation to Uptime</h2>
+      <p>One platform to track, maintain, and optimize every elevator in your portfolio.</p>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon" style="background: linear-gradient(135deg,#667eea,#764ba2)">🏗️</div>
+        <h3>Elevator Tracking</h3>
+        <p>Real-time status monitoring of all elevators. Track type, location, installation date, and current operational state.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background: linear-gradient(135deg,#f093fb,#f5576c)">👷</div>
+        <h3>Technician Management</h3>
+        <p>Manage skilled technicians across wiring, sensors, and PCB. Assign work and track performance easily.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background: linear-gradient(135deg,#4facfe,#00f2fe)">⚠️</div>
+        <h3>Fault Reporting</h3>
+        <p>Report sensor, door, motor, and PCB issues instantly. Track status from pending to resolved with photo upload.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background: linear-gradient(135deg,#43e97b,#38f9d7)">🔧</div>
+        <h3>Maintenance Scheduler</h3>
+        <p>Schedule monthly, quarterly, and annual maintenance. Never miss a service with smart overdue alerts.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background: linear-gradient(135deg,#fa709a,#fee140)">📋</div>
+        <h3>Service History</h3>
+        <p>Complete log of all repairs and maintenance. Know who did what, when, and on which elevator.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background: linear-gradient(135deg,#a18cd1,#fbc2eb)">🤖</div>
+        <h3>Smart AI Suggestions</h3>
+        <p>Our system detects repeat faults and suggests proactive replacements before failures escalate.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="section how-section">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-tag">How It Works</span>
+      <h2>Simple. Smart. Effective.</h2>
+    </div>
+    <div class="steps-grid">
+      <div class="step-card">
+        <div class="step-number">01</div>
+        <h3>Register & Add Elevators</h3>
+        <p>Create your account and add all elevators with location, type, and installation details.</p>
+      </div>
+      <div class="step-connector">→</div>
+      <div class="step-card">
+        <div class="step-number">02</div>
+        <h3>Assign Technicians</h3>
+        <p>Add your team with their skills — wiring, sensors, PCB — and assign them to elevators.</p>
+      </div>
+      <div class="step-connector">→</div>
+      <div class="step-card">
+        <div class="step-number">03</div>
+        <h3>Track & Resolve</h3>
+        <p>Report faults, schedule maintenance, and track everything from the dashboard.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div class="container">
+    <div class="cta-card">
+      <div class="cta-content">
+        <h2>Ready to Modernize Your Elevator Operations?</h2>
+        <p>Join hundreds of buildings already using ElevaTech for smarter maintenance.</p>
+        <div class="cta-actions">
+          <a href="{% url 'register' %}" class="btn btn-white btn-lg">Start for Free</a>
+          <a href="{% url 'contact' %}" class="btn btn-outline-white btn-lg">Talk to Us</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  // Elevator animation
+  const cabin = document.querySelector('.el-cabin');
+  if (cabin) {
+    let pos = 60, dir = 1;
+    setInterval(() => {
+      pos += dir * 0.5;
+      if (pos >= 80 || pos <= 10) dir *= -1;
+      cabin.style.top = pos + '%';
+    }, 50);
+  }
+  // Door animation
+  setInterval(() => {
+    const doors = document.querySelectorAll('.el-door');
+    doors.forEach(d => d.classList.toggle('open'));
+  }, 2500);
+</script>
+{% endblock %}
